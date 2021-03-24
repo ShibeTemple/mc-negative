@@ -107,7 +107,7 @@ class EmptyChunk:
 			raise OutOfBoundsCoordinates(f'Y ({y!r}) must be in range of 0 to 255')
 		section = self.sections[y // 16]
 		if section is None:
-			print('empty section')
+			#print('empty section')
 			section = EmptySection(y // 16)
 			self.add_section(section)
 		"""before = defaultdict(int)

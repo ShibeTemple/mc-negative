@@ -136,7 +136,7 @@ class EmptyRegion:
 		cz = z // 16
 		chunk = self.get_chunk(cx, cz)
 		if chunk is None:
-			print("empty chunk")
+			#print("empty chunk")
 			chunk = EmptyChunk(cx, cz)
 			self.add_chunk(chunk)
 		chunk.set_block(block, x % 16, y, z % 16)
