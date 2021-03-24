@@ -110,19 +110,19 @@ class EmptyChunk:
 			print('empty section')
 			section = EmptySection(y // 16)
 			self.add_section(section)
-		before = defaultdict(int)
+		"""before = defaultdict(int)
 		after = defaultdict(int)
 
 		for i in get_objects():
 			before[type(i)] += 1
-
+		"""
 		section.set_block(block, x, y % 16, z)
-
+		"""
 		for i in get_objects():
 			after[type(i)] += 1
 			leaks = [(k, after[k] - before[k]) for k in after if after[k] - before[k]]
 			if not leaks == []:
-				print(leaks)
+				print(leaks)"""
 
 	def save(self) -> nbt.NBTFile:
 		"""
