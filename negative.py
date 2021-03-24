@@ -226,6 +226,7 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 										output_region.set_block(new_block, global_block_x, block_y, global_block_z)
 
 									if (not entitydataset) and chunk_diff:
+										entitydataset = True
 										output_region.setEntities(post_chunk.getEntities(),global_block_x,global_block_z)
 										output_region.setTileEntities(post_chunk.getTileEntities(),global_block_x,global_block_z)
 
