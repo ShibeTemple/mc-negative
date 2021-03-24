@@ -1,6 +1,8 @@
 # Minecraft Negative
 
-Compares a Minecraft world against its younger self to create a negative of the differences, consisting typically of player actions like player structures and blocks removed from the world. We call these worlds Pre and Post. The Pre world could be a backup or a blank world generated with the same seed in the same Minecraft version. The program takes the differences between post and pre, then transposes them on a new world. This program was created with the intention of providing a way to essentially 'upgrade' a pre-existing Minecraft world to a newer version of Minecraft. Note: Currently does not support upgrading a pre-1.13 world past 1.13 due to data differences. Supports 1.16 to 1.17 and so on, however.
+Compares a Minecraft world against its younger self to create a negative of the differences, consisting typically of player actions like player structures and blocks removed from the world. We call these worlds Pre and Post. The Pre world could be a backup or a blank world generated with the same seed in the same Minecraft version. The program takes the differences between post and pre, then transposes them on a new world. This program was created with the intention of providing a way to essentially 'upgrade' a pre-existing Minecraft world to a newer version of Minecraft.
+
+**Note:** Currently does not support upgrading a pre-1.13 world past 1.13 due to data differences. Supports 1.16 to 1.17 and so on, however.
 
 ## Example:
 
@@ -11,7 +13,7 @@ Usage:
 python negative.py world-pre myworld world-new world-export -t 12
 ```
 
-## Notes:
+## Base Usage:
 
 ```
 python negative.py PRE POST NEW EXPORT
@@ -27,7 +29,7 @@ This program does not modify the 'pre', 'post' or 'new' worlds. It only creates 
 | `-b`<br/> or<br/> `-bedrock` | Forces the program to check the bedrock layer (y=0) of blocks when running through every chunk. Normally excluded for efficiency. |
 | `-t 1`<br/> or<br/> `-threads 1` | Number of region files to compare simultaneously. Each region file is assigned its own thread. Default is 1.  |
 
-## Tested MC Versions
+## Tested Scenarios and Versions
 
 | Old Version | New Version | Successful | Notes |
 | --- | --- | --- | --- |
