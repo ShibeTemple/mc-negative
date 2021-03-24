@@ -149,31 +149,18 @@ class EmptyChunk:
 		# ignored if you pass it as a kwarg in the constructor
 		level.name = 'Level'
 
-		# if entities were never set by negative.py, then dont incorperate them
-		if (self.TileEntities == None or self.Entities == None):
-			level.tags.extend([
-				nbt.TAG_List(name='Entities', type=nbt.TAG_Compound),
-				nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound),
-				nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
-				nbt.TAG_Int(name='xPos', value=self.x),
-				nbt.TAG_Int(name='zPos', value=self.z),
-				nbt.TAG_Long(name='LastUpdate', value=0),
-				nbt.TAG_Long(name='InhabitedTime', value=0),
-				nbt.TAG_Byte(name='isLightOn', value=1),
-				nbt.TAG_String(name='Status', value='full')
-			])
-		else:
-			level.tags.extend([
-				nbt.TAG_List(name='Entities', type=nbt.TAG_Compound, value=self.Entities),
-				nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound, value=self.TileEntities),
-				nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
-				nbt.TAG_Int(name='xPos', value=self.x),
-				nbt.TAG_Int(name='zPos', value=self.z),
-				nbt.TAG_Long(name='LastUpdate', value=0),
-				nbt.TAG_Long(name='InhabitedTime', value=0),
-				nbt.TAG_Byte(name='isLightOn', value=1),
-				nbt.TAG_String(name='Status', value='full')
-			])
+		print("[anvil] saving chunk with entity data --empty_chunk.py")
+		level.tags.extend([
+			nbt.TAG_List(name='Entities', type=nbt.TAG_Compound, value=self.Entities),
+			nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound, value=self.TileEntities),
+			nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
+			nbt.TAG_Int(name='xPos', value=self.x),
+			nbt.TAG_Int(name='zPos', value=self.z),
+			nbt.TAG_Long(name='LastUpdate', value=0),
+			nbt.TAG_Long(name='InhabitedTime', value=0),
+			nbt.TAG_Byte(name='isLightOn', value=1),
+			nbt.TAG_String(name='Status', value='full')
+		])
 		sections = nbt.TAG_List(name='Sections', type=nbt.TAG_Compound)
 		for s in self.sections:
 			if s:

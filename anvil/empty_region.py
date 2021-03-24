@@ -31,14 +31,54 @@ class EmptyRegion:
 		self.chunks: List[EmptyChunk] = [None] * 1024
 		self.x = x
 		self.z = z
-		self.TileEntities = None
-		self.Entities = None
 
 	def setTileEntities(self,input):
-		self.TileEntities = input
+		"""
+		Sets the NBT TileEntity data for a chunk within this region
 
-	def setEntities(self,input):
-		self.Entities = input
+		Parameters
+		----------
+		int x, z
+			Global block coordinates, which identify a chunk
+
+		input
+			Takes TileEntity NBT data
+		"""
+		cx = x // 16
+		cz = z // 16
+		if not self.inside(cx, 0, cz, chunk=True):
+			raise OutOfBoundsCoordinates(f'Chunk ({cx}, 0, {cz}) is not inside this region -- setTileEntities')
+		chunk = self.get_chunk(cx, cz)
+		if chunk is None:
+			#chunk = EmptyChunk(cx, cz)
+			#self.add_chunk(chunk)
+			print("chunk was never created by anvil, will not assign tileentity data to it. -- setTileEntities GBC:",x,z)
+		else:
+			chunk.setTileEntities(input)
+
+	def setEntities(self,input,x:int,z:int):
+		"""
+		Sets the NBT Entity data for a chunk within this region
+
+		Parameters
+		----------
+		int x, z
+			Global block coordinates, which identify a chunk
+
+		input
+			Takes Entity NBT data
+		"""
+		cx = x // 16
+		cz = z // 16
+		if not self.inside(cx, 0, cz, chunk=True):
+			raise OutOfBoundsCoordinates(f'Chunk ({cx}, 0, {cz}) is not inside this region -- setEntities')
+		chunk = self.get_chunk(cx, cz)
+		if chunk is None:
+			#chunk = EmptyChunk(cx, cz)
+			#self.add_chunk(chunk)
+			print("chunk was never created by anvil, will not assign entity data to it. -- setEntities GBC:",x,z)
+		else:
+			chunk.setEntities(input)
 
 	def inside(self, x: int, y: int, z: int, chunk: bool=False) -> bool:
 		"""
@@ -226,8 +266,8 @@ class EmptyRegion:
 			# else, it is probably an EmptyChunk, SO:
 			else:
 				#print("doing the chunk.save() call within empty_region class. GOOOOODDD")
-				chunk.setTileEntities(self.TileEntities)
-				chunk.setEntities(self.Entities)
+				#chunk.setTileEntities(self.TileEntities)
+				#chunk.setEntities(self.Entities)
 				nbt_data = chunk.save()
 			nbt_data.write_file(buffer=chunk_data)
 			chunk_data.seek(0)

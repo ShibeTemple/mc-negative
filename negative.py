@@ -156,6 +156,7 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 				for local_chunk_z in range(32):
 					chunk_count += 1
 					chunk_diff = False
+					entitydataset = False
 					printv("--")
 					printv(chunk_count,"CHUNK:",local_chunk_x,local_chunk_z)
 
@@ -193,6 +194,7 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 									printv("current block:",local_block_x,block_y,local_block_z)
 
 									# global block coords
+									# verified as accurate twice. once by coordinate tools and second by "in world at"
 									global_block_x = glob_chunk_x*16+local_block_x
 									global_block_z = glob_chunk_z*16+local_block_z
 
@@ -206,6 +208,13 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 									printv(pre_block)
 									printv(post_block)
 
+									#print("--")
+									#print("1:", global_block_x, global_block_z) # global block coords
+									#print("2:", local_chunk_x, local_chunk_z) # chunk id
+									#print("3:", global_block_x // 16, global_block_z // 16) # "in world at"
+									#print("4:", local_chunk_x % 32, local_chunk_z % 32 ) # chunk id
+									#print("--")
+
 									if not (pre_block.id == post_block.id):
 										#printp(file,"DIFFERENT BLOCK FOUND",pre_block.id,post_block.id)
 										chunk_diff = True
@@ -216,17 +225,25 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 										# if post and pre world blocks are same, set output world block as new world block
 										output_region.set_block(new_block, global_block_x, block_y, global_block_z)
 
+									if (not entitydataset) and chunk_diff:
+										output_region.setEntities(post_chunk.getEntities(),global_block_x,global_block_z)
+										output_region.setTileEntities(post_chunk.getTileEntities(),global_block_x,global_block_z)
 
-
-						if chunk_diff:
-							#printp(file,"CHUNK DIFF", local_chunk_x,local_chunk_z)
-							output_region.setEntities(post_chunk.getEntities())
-							output_region.setTileEntities(post_chunk.getTileEntities())
 					except:
 						#printp(file,"chunk failed lol", local_chunk_x,local_chunk_z, "..", sys.exc_info()[0])
 						#printv(sys.exc_info()[0])
 						#print(traceback.print_exc())
 						pass
+
+					if chunk_diff:
+						printv(file,"CHUNK DIFF", local_chunk_x,local_chunk_z)
+						#print("CHUNK DIFF")
+						#print(post_chunk.getEntities())
+						#print(post_chunk.getTileEntities())
+						#output_region.setEntities(post_chunk.getEntities(),)
+						#output_region.setTileEntities(post_chunk.getTileEntities(),)
+						#print(output_region.getEntities())
+						#print(output_region.getTileEntities())
 
 			#  [1]
 			#print("POST:",check_x,check_y,check_z)
@@ -254,8 +271,10 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 
 # Make the Pool of workers
 if len(filelist) < threads:
+	print("using",len(filelist),"threads")
 	pool = ThreadPool(len(filelist))
 else:
+	print("using",threads,"threads")
 	pool = ThreadPool(threads)
 
 # Open the files in their own threads
