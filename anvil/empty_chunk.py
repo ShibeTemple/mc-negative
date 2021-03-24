@@ -141,7 +141,7 @@ class EmptyChunk:
 		Does not contain most data a regular chunk would have,
 		but minecraft stills accept it.
 		"""
-		print("EMPTY_CHUNK.PY save() method called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		#print("EMPTY_CHUNK.PY save() method called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		root = nbt.NBTFile()
 		root.tags.append(nbt.TAG_Int(name='DataVersion',value=self.version))
 		level = nbt.TAG_Compound()

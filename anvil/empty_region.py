@@ -225,7 +225,7 @@ class EmptyRegion:
 				nbt_data.tags.append(chunk.data)
 			# else, it is probably an EmptyChunk, SO:
 			else:
-				print("doing the chunk.save() call within empty_region class. GOOOOODDD")
+				#print("doing the chunk.save() call within empty_region class. GOOOOODDD")
 				chunk.setTileEntities(self.TileEntities)
 				chunk.setEntities(self.Entities)
 				nbt_data = chunk.save()
