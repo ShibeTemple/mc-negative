@@ -22,12 +22,20 @@ class EmptyChunk:
 	version: :class:`int`
 		Chunk's DataVersion
 	"""
-	__slots__ = ('x', 'z', 'sections', 'version')
+	__slots__ = ('x', 'z', 'sections', 'version', 'TileEntities', 'Entities')
 	def __init__(self, x: int, z: int):
 		self.x = x
 		self.z = z
 		self.sections: List[EmptySection] = [None]*16
 		self.version = 1976
+		self.TileEntities = None
+		self.Entities = None
+
+	def setTileEntities(self,input):
+		self.TileEntities = input
+
+	def setEntities(self,input):
+		self.Entities = input
 
 	def add_section(self, section: EmptySection, replace: bool = True):
 		"""
@@ -133,23 +141,39 @@ class EmptyChunk:
 		Does not contain most data a regular chunk would have,
 		but minecraft stills accept it.
 		"""
+		print("EMPTY_CHUNK.PY save() method called!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		root = nbt.NBTFile()
 		root.tags.append(nbt.TAG_Int(name='DataVersion',value=self.version))
 		level = nbt.TAG_Compound()
 		# Needs to be in a separate line because it just gets
 		# ignored if you pass it as a kwarg in the constructor
 		level.name = 'Level'
-		level.tags.extend([
-			nbt.TAG_List(name='Entities', type=nbt.TAG_Compound),
-			nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound),
-			nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
-			nbt.TAG_Int(name='xPos', value=self.x),
-			nbt.TAG_Int(name='zPos', value=self.z),
-			nbt.TAG_Long(name='LastUpdate', value=0),
-			nbt.TAG_Long(name='InhabitedTime', value=0),
-			nbt.TAG_Byte(name='isLightOn', value=1),
-			nbt.TAG_String(name='Status', value='full')
-		])
+
+		# if entities were never set by negative.py, then dont incorperate them
+		if (self.TileEntities == None or self.Entities == None):
+			level.tags.extend([
+				nbt.TAG_List(name='Entities', type=nbt.TAG_Compound),
+				nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound),
+				nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
+				nbt.TAG_Int(name='xPos', value=self.x),
+				nbt.TAG_Int(name='zPos', value=self.z),
+				nbt.TAG_Long(name='LastUpdate', value=0),
+				nbt.TAG_Long(name='InhabitedTime', value=0),
+				nbt.TAG_Byte(name='isLightOn', value=1),
+				nbt.TAG_String(name='Status', value='full')
+			])
+		else:
+			level.tags.extend([
+				nbt.TAG_List(name='Entities', type=nbt.TAG_Compound, value=self.Entities),
+				nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound, value=self.TileEntities),
+				nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
+				nbt.TAG_Int(name='xPos', value=self.x),
+				nbt.TAG_Int(name='zPos', value=self.z),
+				nbt.TAG_Long(name='LastUpdate', value=0),
+				nbt.TAG_Long(name='InhabitedTime', value=0),
+				nbt.TAG_Byte(name='isLightOn', value=1),
+				nbt.TAG_String(name='Status', value='full')
+			])
 		sections = nbt.TAG_List(name='Sections', type=nbt.TAG_Compound)
 		for s in self.sections:
 			if s:

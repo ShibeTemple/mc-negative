@@ -217,9 +217,11 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 										output_region.set_block(new_block, global_block_x, block_y, global_block_z)
 
 
+
 						if chunk_diff:
 							#printp(file,"CHUNK DIFF", local_chunk_x,local_chunk_z)
-							pass
+							output_region.setEntities(post_chunk.getEntities())
+							output_region.setTileEntities(post_chunk.getTileEntities())
 					except:
 						#printp(file,"chunk failed lol", local_chunk_x,local_chunk_z, "..", sys.exc_info()[0])
 						#printv(sys.exc_info()[0])
@@ -251,7 +253,10 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 # for file in glob.glob("*.mca"):
 
 # Make the Pool of workers
-pool = ThreadPool(threads)
+if len(filelist) < threads:
+	pool = ThreadPool(len(filelist))
+else:
+	pool = ThreadPool(threads)
 
 # Open the files in their own threads
 # and return the results

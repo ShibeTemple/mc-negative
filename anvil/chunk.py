@@ -359,6 +359,14 @@ class Chunk:
 			if x == t_x and y == t_y and z == t_z:
 				return tile_entity
 
+
+	def getTileEntities(self):
+		#print("TileEntities:",self.data["TileEntities"])
+		return self.data["TileEntities"]
+
+	def getEntities(self):
+		return self.data["Entities"]
+
 	@classmethod
 	def from_region(cls, region: Union[str, Region], chunk_x: int, chunk_z: int):
 		"""

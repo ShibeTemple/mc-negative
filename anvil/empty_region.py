@@ -25,12 +25,20 @@ class EmptyRegion:
 	x: :class:`int`
 	z: :class:`int`
 	"""
-	__slots__ = ('chunks', 'x', 'z')
+	__slots__ = ('chunks', 'x', 'z', 'TileEntities', 'Entities')
 	def __init__(self, x: int, z: int):
 		# Create a 1d list for the 32x32 chunks
 		self.chunks: List[EmptyChunk] = [None] * 1024
 		self.x = x
 		self.z = z
+		self.TileEntities = None
+		self.Entities = None
+
+	def setTileEntities(self,input):
+		self.TileEntities = input
+
+	def setEntities(self,input):
+		self.Entities = input
 
 	def inside(self, x: int, y: int, z: int, chunk: bool=False) -> bool:
 		"""
@@ -210,11 +218,16 @@ class EmptyRegion:
 				chunks_data.append(None)
 				continue
 			chunk_data = BytesIO()
+			# if its a read-only chunk, then:
 			if isinstance(chunk, Chunk):
 				nbt_data = nbt.NBTFile()
 				nbt_data.tags.append(nbt.TAG_Int(name='DataVersion', value=chunk.version))
 				nbt_data.tags.append(chunk.data)
+			# else, it is probably an EmptyChunk, SO:
 			else:
+				print("doing the chunk.save() call within empty_region class. GOOOOODDD")
+				chunk.setTileEntities(self.TileEntities)
+				chunk.setEntities(self.Entities)
 				nbt_data = chunk.save()
 			nbt_data.write_file(buffer=chunk_data)
 			chunk_data.seek(0)
