@@ -18,8 +18,6 @@ import itertools
 # https://stackoverflow.com/a/28463266/3809002
 from multiprocessing.dummy import Pool as ThreadPool
 
-# Active Directory
-
 
 # setup
 
@@ -36,6 +34,7 @@ a_output = input_arguments[4]
 threads = 1
 verbose = False
 include_bedrock = False
+handle_entities = True
 wd = os.getcwd()
 
 print("pre:",a_pre,"post:",a_post,"new:",a_new,"output:",a_output)
@@ -46,8 +45,8 @@ print("=========================================================================
 # windows use time.clock, else use time.time
 start_time = time.time()
 
-short_options = "hvbt:"
-long_options = ["help", "verbose", "bedrock", "threads="]
+short_options = "hvbt:e"
+long_options = ["help", "verbose", "bedrock", "threads=", "entities"]
 try:
 	arguments, values = getopt.getopt(argument_list, short_options, long_options)
 except getopt.error as err:
@@ -63,8 +62,11 @@ for current_argument, current_value in arguments:
 	elif current_argument in ("-h", "--help"):
 		print ("Displaying help")
 	elif current_argument in ("-b", "--bedrock"):
-		print ("ENABLING THE SCANNING OF y=0... checking bedrock layer... argument -b/--bedrock")
+		print ("ENABLING THE SCANNING OF y=0... checking bedrock layer...")
 		include_bedrock = True
+	elif current_argument in ("-e", "--entities"):
+		print ("Disabling entity migration")
+		handle_entities = False
 	elif current_argument in ("-t", "--threads"):
 		if current_value.isnumeric():
 			print (("Thread count set to (%s)") % (current_value))
@@ -115,7 +117,7 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 	region_z = int(split_file[2])
 	#print(region_x,region_z)
 	#print("REGION:","r[","{:03d}".format(region_x),"{:03d}".format(region_z),"]",file)
-	printp(file,"new thread")
+	printp(file,"new thread launched")
 
 	#t_file = wd + "\\" + a_post + "\\region\\" + file
 
@@ -126,7 +128,7 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 
 		post_region = anvil.Region.from_file(wd_post_region + file)
 		if os.path.isfile(wd_pre_region + file) and os.path.isfile(wd_new_region + file):
-			printp(file,"region file exists in all")
+			printp(file,"region file exists in all. processing")
 
 			pre_region = anvil.Region.from_file(wd_pre_region + file)
 
@@ -186,6 +188,16 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 						post_chunk = anvil.Chunk.from_region(post_region,local_chunk_x,local_chunk_z)
 						new_chunk = anvil.Chunk.from_region(new_region,local_chunk_x,local_chunk_z)
 
+					except anvil.ChunkNotFound:
+						printv(file,"chunk failed lol", local_chunk_x,local_chunk_z, "..", sys.exc_info()[0])
+						#print("chunk failed bc it gone")
+						#print(sys.exc_info()[0])
+						#print(traceback.print_exc())
+					except:
+						print("chunk fail")
+						print(sys.exc_info()[0])
+						print(traceback.print_exc())
+					else:
 						# every block in the current chunk
 						for block_y in chunk_range_y:
 							for local_block_x in range(16):
@@ -225,16 +237,11 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 										# if post and pre world blocks are same, set output world block as new world block
 										output_region.set_block(new_block, global_block_x, block_y, global_block_z)
 
-									if (not entitydataset) and chunk_diff:
+									if (not entitydataset) and chunk_diff and handle_entities:
+										printv("saving entity data to chunk")
 										entitydataset = True
 										output_region.setEntities(post_chunk.getEntities(),global_block_x,global_block_z)
-										output_region.setTileEntities(post_chunk.getTileEntities(),global_block_x,global_block_z)
-
-					except:
-						#printp(file,"chunk failed lol", local_chunk_x,local_chunk_z, "..", sys.exc_info()[0])
-						#printv(sys.exc_info()[0])
-						#print(traceback.print_exc())
-						pass
+										output_region.setTileEntities(post_chunk.getTileEntities(), global_block_x, global_block_z)
 
 					if chunk_diff:
 						printv(file,"CHUNK DIFF", local_chunk_x,local_chunk_z)
@@ -262,7 +269,7 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 			# doesnt exist in pre-world, so all data within post-world is new....
 			# for our case, ignore...
 			# allow the output world to generate entirely new terrain. our world dimensions are set
-			printp(file,"THREAD COMPLETED.... region file does not exist in all worlds, skipping", file)
+			printp(file,"THREAD COMPLETED.... region file does not exist in all worlds, skipping")
 
 			#printp(file,"------------------THREAD COMPLETED.... TERMINATING")
 			return 0

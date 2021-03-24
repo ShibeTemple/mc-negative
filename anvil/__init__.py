@@ -7,3 +7,4 @@ from .empty_section import EmptySection
 from .raw_section import RawSection
 
 from .TileChunk import TileChunk
+from .errors import ChunkNotFound

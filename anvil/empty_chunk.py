@@ -151,8 +151,8 @@ class EmptyChunk:
 
 		print("[anvil] saving chunk with entity data --empty_chunk.py")
 		level.tags.extend([
-			nbt.TAG_List(name='Entities', type=nbt.TAG_Compound, value=self.Entities),
-			nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound, value=self.TileEntities),
+			nbt.TAG_List(name='Entities', type=nbt.TAG_Compound),
+			nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound),
 			nbt.TAG_List(name='LiquidTicks', type=nbt.TAG_Compound),
 			nbt.TAG_Int(name='xPos', value=self.x),
 			nbt.TAG_Int(name='zPos', value=self.z),
@@ -161,6 +161,34 @@ class EmptyChunk:
 			nbt.TAG_Byte(name='isLightOn', value=1),
 			nbt.TAG_String(name='Status', value='full')
 		])
+
+		updatedEntities = False
+
+		if self.TileEntities != None and self.TileEntities != []:
+			print("INPUT: self.TileEntities",self.TileEntities)
+
+			print("--pre--")
+			print("TileEntities",level["TileEntities"])
+			level["TileEntities"].extend(self.TileEntities)
+			print("--post--")
+			print("TileEntities",level["TileEntities"])
+
+			updatedEntities = True
+
+		if self.Entities != None and self.Entities != []:
+			print("INPUT: self.Entities",self.Entities)
+
+			print("--pre--")
+			print("Entities",level["Entities"])
+			level["Entities"].extend(self.Entities)
+			print("--post--")
+			print("Entities",level["Entities"])
+
+			updatedEntities = True
+
+		if updatedEntities:
+			print("---")
+
 		sections = nbt.TAG_List(name='Sections', type=nbt.TAG_Compound)
 		for s in self.sections:
 			if s:

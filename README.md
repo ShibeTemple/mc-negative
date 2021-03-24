@@ -4,7 +4,7 @@ Compares a Minecraft world against its younger self to create a negative of the 
 
 **Note:** Currently does not support upgrading a pre-1.13 world past 1.13 due to data differences. Supports 1.16 to 1.17 and so on, however.
 
-All chunks that you want to be processed need to be rendered within all three worlds. Even if pre and post have the chunk and a comparison can be made, there is no new world to base the output chunk on.
+All chunks that you want to be processed need to be rendered within all three worlds. Even if pre and post have the chunk and a comparison can be made, there is no new chunk to base the output chunk on, therefore it will be skipped.
 
 ## Example:
 
@@ -27,9 +27,10 @@ This program does not modify the 'pre', 'post' or 'new' worlds. It only creates 
 
 | Argument | Description |
 | --- | --- |
-| `-v`<br/> or<br/> `-verbose` | Enables verbose logging. **NOTE:** Slows down execution time tremendously. |
-| `-b`<br/> or<br/> `-bedrock` | Forces the program to check the bedrock layer (y=0) of blocks when running through every chunk. Normally excluded for efficiency. |
-| `-t 1`<br/> or<br/> `-threads 1` | Number of region files to compare simultaneously. Each region file is assigned its own thread. Default is 1.  |
+| `-v`<br/> or<br/> `--verbose` | Enables verbose logging. **NOTE:** Slows down execution time tremendously. |
+| `-b`<br/> or<br/> `--bedrock` | Forces the program to check the bedrock layer (y=0) of blocks when running through every chunk. Normally excluded for efficiency. |
+| `-t 1`<br/> or<br/> `--threads 1` | Number of region files to compare simultaneously. Each region file is assigned its own thread. Default is 1.  |
+| `-e`<br/> or<br/> `--entities` | Disables the migration of entities from post world onto output world. |
 
 ## Tested Scenarios and Versions
 
