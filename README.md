@@ -33,4 +33,4 @@ This program does not modify the 'pre', 'post' or 'new' worlds. It only creates 
 | --- | --- | --- | --- |
 | 1.12 | 1.12 | yes | simple data migration test |
 | 1.16 | 1.17 (21w11a) | yes | relevant world upgrade test |
-| 1.12 | 1.16 | no, see open issue regarding this | version jump test, 1.13 Flattening issue |
+| 1.12 | 1.16 | no | version jump test. 1.13 Flattening issue, see open issue regarding this. |
