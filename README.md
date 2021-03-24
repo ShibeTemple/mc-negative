@@ -4,6 +4,8 @@ Compares a Minecraft world against its younger self to create a negative of the 
 
 **Note:** Currently does not support upgrading a pre-1.13 world past 1.13 due to data differences. Supports 1.16 to 1.17 and so on, however.
 
+All chunks that you want to be processed need to be rendered within all three worlds. Even if pre and post have the chunk and a comparison can be made, there is no new world to base the output chunk on.
+
 ## Example:
 
 `myworld` is a 1.12 map with player content. `world-pre` is a newly created 1.12 world with the same seed as `myworld`. This program will compare the differences between those two and place them onto the 1.16 `world-new` map, exported as `world-export`.
