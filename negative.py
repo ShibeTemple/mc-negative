@@ -24,7 +24,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 # setup
 
 input_arguments = sys.argv
-argument_list = input_arguments[5:] # all but first, which is filename (and three files)
+argument_list = input_arguments[5:] # all but first, which is filename (and three world directories)
 print("====================================================================================================")
 print("ALL ARGUMENTS: ", input_arguments)
 print("ARGUMENTS: ", argument_list)
@@ -46,8 +46,8 @@ print("=========================================================================
 # windows use time.clock, else use time.time
 start_time = time.time()
 
-short_options = "hp:vbt:"
-long_options = ["help", "pre=", "verbose", "bedrock", "threads="]
+short_options = "hvbt:"
+long_options = ["help", "verbose", "bedrock", "threads="]
 try:
 	arguments, values = getopt.getopt(argument_list, short_options, long_options)
 except getopt.error as err:
