@@ -149,7 +149,7 @@ class EmptyChunk:
 		# ignored if you pass it as a kwarg in the constructor
 		level.name = 'Level'
 
-		print("[anvil] saving chunk with entity data --empty_chunk.py")
+
 		level.tags.extend([
 			nbt.TAG_List(name='Entities', type=nbt.TAG_Compound),
 			nbt.TAG_List(name='TileEntities', type=nbt.TAG_Compound),
@@ -164,7 +164,7 @@ class EmptyChunk:
 
 		updatedEntities = False
 
-		if self.TileEntities != None and len(self.Entities) > 0:
+		if self.TileEntities != None and len(self.TileEntities) > 0:
 			print("INPUT: self.TileEntities",self.TileEntities)
 			print("INPUT TYPE:",type(self.TileEntities))
 
@@ -185,6 +185,7 @@ class EmptyChunk:
 			updatedEntities = True
 
 		if updatedEntities:
+			print("[anvil] chunk saved with entity data --empty_chunk.py")
 			print("---")
 
 		sections = nbt.TAG_List(name='Sections', type=nbt.TAG_Compound)
