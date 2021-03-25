@@ -130,138 +130,145 @@ def process_region(file, wd_pre_region, wd_post_region, wd_new_region, wd_output
 		if os.path.isfile(wd_pre_region + file) and os.path.isfile(wd_new_region + file):
 			printp(file,"region file exists in all. processing")
 
-			pre_region = anvil.Region.from_file(wd_pre_region + file)
+			if not (os.stat(wd_pre_region + file).st_size == os.stat(wd_post_region + file).st_size):
 
-			new_region = anvil.Region.from_file(wd_new_region + file)
+				pre_region = anvil.Region.from_file(wd_pre_region + file)
 
-			# Create a new region with the `EmptyRegion` class at 0, 0 (in region coords)
-			output_region = anvil.EmptyRegion(region_x, region_z)
+				new_region = anvil.Region.from_file(wd_new_region + file)
+
+				# Create a new region with the `EmptyRegion` class at 0, 0 (in region coords)
+				output_region = anvil.EmptyRegion(region_x, region_z)
 
 
-			# Chunks are 16 blocks wide, 16 blocks long, 256 blocks high, and 65536 blocks total.
+				# Chunks are 16 blocks wide, 16 blocks long, 256 blocks high, and 65536 blocks total.
 
-			# region has 32*32 chunks, 1024 total.
+				# region has 32*32 chunks, 1024 total.
 
-			# one region contains 1024*65536 blocks total = 67,108,864 blocks
+				# one region contains 1024*65536 blocks total = 67,108,864 blocks
 
-			# http://www.dinnerbone.com/minecraft/tools/coordinates/
+				# http://www.dinnerbone.com/minecraft/tools/coordinates/
 
-			# minecraft region x,z contains blocks from x=x*512,z=z*512 to x=((x+1)*512)-1, z=((z+1)*512)-1
+				# minecraft region x,z contains blocks from x=x*512,z=z*512 to x=((x+1)*512)-1, z=((z+1)*512)-1
 
-			# r.20.-16.mca
-			# contains blocks 10240,0,-8192 to 10751,255,-7681
+				# r.20.-16.mca
+				# contains blocks 10240,0,-8192 to 10751,255,-7681
 
-			#each chunk
-			block_count = 0
-			chunk_count = 0
-			for local_chunk_x in range(32):
-				for local_chunk_z in range(32):
-					chunk_count += 1
-					chunk_diff = False
-					entitydataset = False
-					printv("--")
-					printv(chunk_count,"CHUNK:",local_chunk_x,local_chunk_z)
+				#each chunk
+				block_count = 0
+				chunk_count = 0
+				for local_chunk_x in range(32):
+					for local_chunk_z in range(32):
+						chunk_count += 1
+						chunk_diff = False
+						entitydataset = False
+						printv("--")
+						printv(chunk_count,"CHUNK:",local_chunk_x,local_chunk_z)
 
-					# global chunk section cords [x,z]
-					glob_chunk_x = (region_x*32)+local_chunk_x
-					glob_chunk_z = (region_z*32)+local_chunk_z
-					printv("local chunk id :",local_chunk_x,local_chunk_z)
-					printv("g chunk section:",glob_chunk_x,glob_chunk_z)
+						# global chunk section cords [x,z]
+						glob_chunk_x = (region_x*32)+local_chunk_x
+						glob_chunk_z = (region_z*32)+local_chunk_z
+						printv("local chunk id :",local_chunk_x,local_chunk_z)
+						printv("g chunk section:",glob_chunk_x,glob_chunk_z)
 
-					# checked as accurate against Coordinate Tools http://www.dinnerbone.com/minecraft/tools/coordinates/
-					# global chunk block coordinate range. [x,y,z]
-					global_chunk_range_x = range(glob_chunk_x*16,glob_chunk_x*16+16)
-					global_chunk_range_z = range(glob_chunk_z*16,glob_chunk_z*16+16)
-					# tested in game, you can build up to 256 exactly... 0-256...
-					# however, "Y (256) must be in range of 0 to 255" as required by anvil-parser
-					if include_bedrock:
-						chunk_range_y = range(256)
-					else:
-						# excluding y=0 as it is always bedrock... way more efficient for almost all worlds
-						chunk_range_y = range(1,256)
-					printv("chunk bounds y:",chunk_range_y[0],chunk_range_y[len(chunk_range_y)-1],"including bedrock?:",include_bedrock)
-					printv("chunk bounds x:",global_chunk_range_x[0],global_chunk_range_x[len(global_chunk_range_x)-1])
-					printv("chunk bounds z:",global_chunk_range_z[0],global_chunk_range_z[len(global_chunk_range_z)-1])
+						# checked as accurate against Coordinate Tools http://www.dinnerbone.com/minecraft/tools/coordinates/
+						# global chunk block coordinate range. [x,y,z]
+						global_chunk_range_x = range(glob_chunk_x*16,glob_chunk_x*16+16)
+						global_chunk_range_z = range(glob_chunk_z*16,glob_chunk_z*16+16)
+						# tested in game, you can build up to 256 exactly... 0-256...
+						# however, "Y (256) must be in range of 0 to 255" as required by anvil-parser
+						if include_bedrock:
+							chunk_range_y = range(256)
+						else:
+							# excluding y=0 as it is always bedrock... way more efficient for almost all worlds
+							chunk_range_y = range(1,256)
+						printv("chunk bounds y:",chunk_range_y[0],chunk_range_y[len(chunk_range_y)-1],"including bedrock?:",include_bedrock)
+						printv("chunk bounds x:",global_chunk_range_x[0],global_chunk_range_x[len(global_chunk_range_x)-1])
+						printv("chunk bounds z:",global_chunk_range_z[0],global_chunk_range_z[len(global_chunk_range_z)-1])
 
-					try:
-						pre_chunk = anvil.Chunk.from_region(pre_region,local_chunk_x,local_chunk_z)
-						post_chunk = anvil.Chunk.from_region(post_region,local_chunk_x,local_chunk_z)
-						new_chunk = anvil.Chunk.from_region(new_region,local_chunk_x,local_chunk_z)
+						try:
+							pre_chunk = anvil.Chunk.from_region(pre_region,local_chunk_x,local_chunk_z)
+							post_chunk = anvil.Chunk.from_region(post_region,local_chunk_x,local_chunk_z)
+							new_chunk = anvil.Chunk.from_region(new_region,local_chunk_x,local_chunk_z)
 
-					except anvil.ChunkNotFound:
-						printv(file,"chunk failed lol", local_chunk_x,local_chunk_z, "..", sys.exc_info()[0])
-						#print("chunk failed bc it gone")
-						#print(sys.exc_info()[0])
-						#print(traceback.print_exc())
-					except:
-						print("chunk fail")
-						print(sys.exc_info()[0])
-						print(traceback.print_exc())
-					else:
-						# every block in the current chunk
-						for block_y in chunk_range_y:
-							for local_block_x in range(16):
-								for local_block_z in range(16):
-									block_count += 1
-									printv("current block:",local_block_x,block_y,local_block_z)
+						except anvil.ChunkNotFound:
+							printv(file,"chunk failed lol", local_chunk_x,local_chunk_z, "..", sys.exc_info()[0])
+							#print("chunk failed bc it gone")
+							#print(sys.exc_info()[0])
+							#print(traceback.print_exc())
+						except:
+							print("chunk fail")
+							print(sys.exc_info()[0])
+							print(traceback.print_exc())
+						else:
+							# every block in the current chunk
+							for block_y in chunk_range_y:
+								for local_block_x in range(16):
+									for local_block_z in range(16):
+										block_count += 1
+										printv("current block:",local_block_x,block_y,local_block_z)
 
-									# global block coords
-									# verified as accurate twice. once by coordinate tools and second by "in world at"
-									global_block_x = glob_chunk_x*16+local_block_x
-									global_block_z = glob_chunk_z*16+local_block_z
+										# global block coords
+										# verified as accurate twice. once by coordinate tools and second by "in world at"
+										global_block_x = glob_chunk_x*16+local_block_x
+										global_block_z = glob_chunk_z*16+local_block_z
 
-									printv("global coords:",global_block_x,block_y,global_block_z)
+										printv("global coords:",global_block_x,block_y,global_block_z)
 
-									# takes local chunk coords
-									pre_block = pre_chunk.get_block(local_block_x,block_y,local_block_z)
-									post_block = post_chunk.get_block(local_block_x,block_y,local_block_z)
-									new_block = post_chunk.get_block(local_block_x,block_y,local_block_z)
+										# takes local chunk coords
+										pre_block = pre_chunk.get_block(local_block_x,block_y,local_block_z)
+										post_block = post_chunk.get_block(local_block_x,block_y,local_block_z)
+										new_block = post_chunk.get_block(local_block_x,block_y,local_block_z)
 
-									printv(pre_block)
-									printv(post_block)
+										printv(pre_block)
+										printv(post_block)
 
-									#print("--")
-									#print("1:", global_block_x, global_block_z) # global block coords
-									#print("2:", local_chunk_x, local_chunk_z) # chunk id
-									#print("3:", global_block_x // 16, global_block_z // 16) # "in world at"
-									#print("4:", local_chunk_x % 32, local_chunk_z % 32 ) # chunk id
-									#print("--")
+										#print("--")
+										#print("1:", global_block_x, global_block_z) # global block coords
+										#print("2:", local_chunk_x, local_chunk_z) # chunk id
+										#print("3:", global_block_x // 16, global_block_z // 16) # "in world at"
+										#print("4:", local_chunk_x % 32, local_chunk_z % 32 ) # chunk id
+										#print("--")
 
-									if not (pre_block.id == post_block.id):
-										#printp(file,"DIFFERENT BLOCK FOUND",pre_block.id,post_block.id)
-										chunk_diff = True
-										# if post world contains different block vs pre world, set output world block as post block
-										# uses global block coordinates for some ungodly reason
-										output_region.set_block(post_block, global_block_x, block_y, global_block_z)
-									else:
-										# if post and pre world blocks are same, set output world block as new world block
-										output_region.set_block(new_block, global_block_x, block_y, global_block_z)
+										if not (pre_block.id == post_block.id):
+											#printp(file,"DIFFERENT BLOCK FOUND",pre_block.id,post_block.id)
+											chunk_diff = True
+											# if post world contains different block vs pre world, set output world block as post block
+											# uses global block coordinates for some ungodly reason
+											output_region.set_block(post_block, global_block_x, block_y, global_block_z)
+										else:
+											# if post and pre world blocks are same, set output world block as new world block
+											output_region.set_block(new_block, global_block_x, block_y, global_block_z)
 
-									if (not entitydataset) and chunk_diff and handle_entities:
-										printv("saving entity data to chunk")
-										entitydataset = True
-										output_region.setEntities(post_chunk.getEntities(),global_block_x,global_block_z)
-										output_region.setTileEntities(post_chunk.getTileEntities(), global_block_x, global_block_z)
+										if (not entitydataset) and chunk_diff and handle_entities:
+											printv("saving entity data to chunk")
+											entitydataset = True
+											output_region.setEntities(post_chunk.getEntities(),global_block_x,global_block_z)
+											output_region.setTileEntities(post_chunk.getTileEntities(), global_block_x, global_block_z)
 
-					if chunk_diff:
-						printv(file,"CHUNK DIFF", local_chunk_x,local_chunk_z)
-						#print("CHUNK DIFF")
-						#print(post_chunk.getEntities())
-						#print(post_chunk.getTileEntities())
-						#output_region.setEntities(post_chunk.getEntities(),)
-						#output_region.setTileEntities(post_chunk.getTileEntities(),)
-						#print(output_region.getEntities())
-						#print(output_region.getTileEntities())
+						if chunk_diff:
+							printv(file,"CHUNK DIFF", local_chunk_x,local_chunk_z)
+							#print("CHUNK DIFF")
+							#print(post_chunk.getEntities())
+							#print(post_chunk.getTileEntities())
+							#output_region.setEntities(post_chunk.getEntities(),)
+							#output_region.setTileEntities(post_chunk.getTileEntities(),)
+							#print(output_region.getEntities())
+							#print(output_region.getTileEntities())
 
-			#  [1]
-			#print("POST:",check_x,check_y,check_z)
+				#  [1]
+				#print("POST:",check_x,check_y,check_z)
 
-			# save output world region file
-			file_to_save = str(wd_output_region) + 'r.' + str(region_x) + '.' + str(region_z) + '.mca'
-			output_region.save(file_to_save)
+				# save output world region file
+				file_to_save = str(wd_output_region) + 'r.' + str(region_x) + '.' + str(region_z) + '.mca'
+				output_region.save(file_to_save)
 
-			printp(file,"THREAD COMPLETED.... REGION PROCESSED.")
-			return block_count
+				printp(file,"THREAD COMPLETED.... REGION PROCESSED.")
+				return block_count
+
+
+			else:
+				printp(file,"THREAD COMPLETED.... region files are of same size. assuming same contents")
+				return 0
 
 
 

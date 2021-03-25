@@ -164,25 +164,23 @@ class EmptyChunk:
 
 		updatedEntities = False
 
-		if self.TileEntities != None and self.TileEntities != []:
+		if self.TileEntities != None and len(self.Entities) > 0:
 			print("INPUT: self.TileEntities",self.TileEntities)
+			print("INPUT TYPE:",type(self.TileEntities))
 
-			print("--pre--")
-			print("TileEntities",level["TileEntities"])
+			print("pre: TileEntities",level["TileEntities"])
 			level["TileEntities"].extend(self.TileEntities)
-			print("--post--")
-			print("TileEntities",level["TileEntities"])
+			print("post: TileEntities",level["TileEntities"])
 
 			updatedEntities = True
 
-		if self.Entities != None and self.Entities != []:
+		if self.Entities != None and len(self.Entities) > 0:
 			print("INPUT: self.Entities",self.Entities)
+			print("INPUT TYPE:",type(self.Entities))
 
-			print("--pre--")
-			print("Entities",level["Entities"])
+			print("pre: Entities",level["Entities"])
 			level["Entities"].extend(self.Entities)
-			print("--post--")
-			print("Entities",level["Entities"])
+			print("post: Entities",level["Entities"])
 
 			updatedEntities = True
 
