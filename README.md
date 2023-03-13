@@ -21,7 +21,7 @@ python negative.py world-pre myworld world-new world-export -t 12
 python negative.py PRE POST NEW EXPORT
 ```
 
-This program does not modify the 'pre', 'post' or 'new' worlds. It only creates an output world, which consists of the differences of 'pre' & 'post' transposed on 'new'.
+This program does not modify the 'pre', 'post' or 'new' worlds (inputs). It only creates an output world, which consists of the differences of 'pre' & 'post' transposed on 'new', (export).
 
 ## Command-line options:
 
